@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+    <!-- Latest compiled and minified CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Vue.js -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+    <!-- Font Awesome4 -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+  </head>
+  <body>
+    <div id="app">
+      <!-- Goal 1 -->
+      <button @click="goal1()" class="btn btn-outline-danger">goal1</button>
+      <!-- Goal 2 - 3 -->
+      <div v-show="isTF" v-for="(question, index) in results" :key="index">
+        <div>
+          <p>Question: {{ question.question }}</p>
+          <h3>Please choose your answer:</h3>
+          <div>
+            <div>
+              <input
+                type="radio"
+                name="selectOption"
+                id="trueOption"
+                value="True"
+                v-model="option"
+              />
+              <label for="trueOption">True</label>
+            </div>
+            <div>
+              <input
+                type="radio"
+                name="selectOption"
+                id="falseOption"
+                value="False"
+                v-model="option"
+              />
+              <label for="falseOption">False</label>
+            </div>
+          </div>
+
+          <!-- Button trigger modal -->
+          <button
+            type="button"
+            class="btn btn-outline-primary"
+            data-bs-toggle="modal"
+            data-bs-target="#staticBackdrop"
+            @click="checkAnswer()"
+          >
+            Check Answer
+          </button>
+          <!-- Modal -->
+          <div
+            class="modal fade"
+            id="staticBackdrop"
+            data-bs-backdrop="static"
+            data-bs-keyboard="false"
+            tabindex="-1"
+            aria-labelledby="staticBackdropLabel"
+            aria-hidden="true"
+          >
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h1 class="modal-title fs-5" id="staticBackdropLabel">
+                    <p v-if="isCorrect">Correct!</p>
+                    <p v-else-if="isNull">Invalid!!!</p>
+                    <p v-else>Incorrect!</p>
+                  </h1>
+                  <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                  ></button>
+                </div>
+                <div class="modal-body">
+                  <p v-if="isCorrect">Congrats! Do you wish to continue?</p>
+                  <p v-else-if="isNull">
+                    Sorry! You have to choose an answer to continue!
+                  </p>
+                  <p v-else="!isCorrect">
+                    Sry:( The answer should be {{question.correct_answer}}
+                  </p>
+                </div>
+                <div class="modal-footer d-flex justify-content-around">
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary"
+                    data-bs-dismiss="modal"
+                  >
+                    Retry
+                  </button>
+                  <button
+                    type="button"
+                    id="TFBtn"
+                    disabled
+                    class="btn btn-outline-primary"
+                    data-bs-dismiss="modal"
+                    @click="switchToMulti()"
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Goal 4 -->
+      <div
+        v-show="isMulti"
+        v-for="(question, index) in multipleQuestion"
+        :key="index"
+      >
+        <div>
+          <p>Question: {{ question.question }}</p>
+          <h3>Please select one of the answers:</h3>
+          <div>
+            <!-- 1 -->
+            <input
+              type="radio"
+              name="multiOption"
+              id="firstOption"
+              v-bind:value="multiQs[0]"
+              v-model="multiOp"
+            />
+            <label for="firstOption">{{multiQs[0]}}</label>
+            <!-- 2 -->
+            <input
+              type="radio"
+              name="multiOption"
+              id="secondOption"
+              v-bind:value="multiQs[1]"
+              v-model="multiOp"
+            />
+            <label for="secondOption">{{multiQs[1]}}</label>
+            <!-- 3 -->
+            <input
+              type="radio"
+              name="multiOption"
+              id="thirdOption"
+              v-bind:value="multiQs[2]"
+              v-model="multiOp"
+            />
+            <label for="thirdOption">{{multiQs[2]}}</label>
+            <!-- 4 -->
+            <input
+              type="radio"
+              name="multiOption"
+              id="fourthOption"
+              v-bind:value="multiQs[3]"
+              v-model="multiOp"
+            />
+            <label for="fourthOption">{{multiQs[3]}}</label>
+          </div>
+          <!-- Button trigger modal -->
+          <button
+            type="button"
+            id="modal-button"
+            class="btn btn-primary"
+            @click="checkAnswer2()"
+            data-bs-toggle="modal"
+            data-bs-target="#staticBackdrop2"
+          >
+            Check
+          </button>
+
+          <!-- Modal -->
+          <div
+            class="modal fade"
+            id="staticBackdrop2"
+            data-bs-backdrop="static"
+            data-bs-keyboard="false"
+            tabindex="-1"
+            aria-labelledby="staticBackdropLabel2"
+            aria-hidden="true"
+          >
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h1 class="modal-title fs-5" id="staticBackdropLabel2">
+                    <p v-if="isCorrect">Correct!</p>
+                    <p v-else-if="isNull">Invalid!!!</p>
+                    <p v-else>Incorrect!</p>
+                  </h1>
+                  <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                  ></button>
+                </div>
+                <div class="modal-body">
+                  <p v-if="isCorrect">Congrats! Do you wish to continue?</p>
+                  <p v-else-if="isNull">
+                    Sorry! You have to choose an answer to continue!
+                  </p>
+                  <p v-else>
+                    Sry:( The answer should be {{question.correct_answer}}
+                  </p>
+                </div>
+                <div class="modal-footer">
+                  <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal"
+                  >
+                    Retry
+                  </button>
+                  <button
+                    type="button"
+                    id="multiBtn"
+                    disabled
+                    class="btn btn-primary"
+                    data-bs-dismiss="modal"
+                    @click="switchToTF()"
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="/easy.js"></script>
+  </body>
+</html>
