@@ -1,0 +1,215 @@
+.first {
+  animation: first 3s linear forwards;
+}
+
+.second {
+  animation: second 3s linear forwards;
+}
+
+.form {
+  animation: form 3s linear forwards;
+}
+
+.third {
+  animation: third 3s linear forwards;
+}
+
+h4.player-info:hover {
+  animation: scale 0.3s ease forwards;
+}
+
+.rainbow-text {
+  animation: rainbow 3s linear infinite;
+}
+
+.fine-text {
+  animation: fine 4s linear infinite;
+}
+
+.ok-text {
+  animation: ok 4s linear infinite;
+}
+
+.failure-text {
+  animation: failure 4s linear infinite;
+}
+
+@keyframes first {
+  0% {
+    transform: rotate(0deg) scale(1);
+    opacity: 0;
+  }
+  50% {
+    transform: rotate(180deg) scale(2);
+    color: rgb(239, 40, 202);
+    opacity: 0.5;
+  }
+  100% {
+    transform: rotate(360deg) scale(1);
+    color: rgb(239, 40, 202);
+    opacity: 1;
+  }
+}
+
+@keyframes second {
+  0% {
+    transform: rotate(0deg) skewX(0deg);
+    opacity: 0;
+  }
+  50% {
+    transform: rotate(180deg) skewX(30deg);
+    color: cornflowerblue;
+    opacity: 0.5;
+  }
+  100% {
+    transform: rotate(360deg) skewX(0deg);
+    color: cornflowerblue;
+    opacity: 1;
+  }
+}
+
+@keyframes form {
+  0% {
+    transform: rotate(0deg) skewX(0deg);
+    opacity: 0;
+  }
+  50% {
+    transform: rotate(180deg) skewX(30deg);
+    opacity: 0.5;
+  }
+  100% {
+    transform: rotate(360deg) skewX(0deg);
+    opacity: 1;
+  }
+}
+
+@keyframes third {
+  0% {
+    transform: rotate(0deg) scale(1);
+    opacity: 0;
+  }
+  50% {
+    transform: rotate(180deg) scale(2);
+    color: rgb(242, 36, 36);
+    opacity: 0.5;
+  }
+  100% {
+    transform: rotate(360deg) scale(1);
+    color: rgb(242, 36, 36);
+    opacity: 1;
+  }
+}
+
+@keyframes scale {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1.2);
+  }
+}
+
+@keyframes rainbow {
+  0% {
+    color: red;
+  }
+  14% {
+    color: rgb(250, 171, 25);
+  }
+  28% {
+    color: rgb(245, 245, 37);
+  }
+  42% {
+    color: rgb(37, 158, 37);
+  }
+  57% {
+    color: rgb(44, 44, 232);
+  }
+  71% {
+    color: rgb(103, 29, 156);
+  }
+  85% {
+    color: rgb(236, 124, 236);
+  }
+  100% {
+    color: red;
+  }
+}
+
+@keyframes fine {
+  0% {
+    color: rgb(238, 62, 62);
+  }
+  14% {
+    color: rgb(250, 171, 25);
+  }
+  28% {
+    color: rgb(230, 230, 91);
+  }
+  42% {
+    color: rgb(82, 154, 82);
+  }
+  57% {
+    color: rgb(106, 106, 218);
+  }
+  71% {
+    color: rgb(118, 73, 151);
+  }
+  85% {
+    color: rgb(215, 133, 215);
+  }
+  100% {
+    color: rgb(242, 74, 74);
+  }
+}
+
+@keyframes ok {
+  0% {
+    color: rgb(233, 156, 12);
+  }
+  28% {
+    color: rgb(245, 245, 37);
+  }
+  42% {
+    color: rgb(37, 158, 37);
+  }
+  55% {
+    color: rgb(132, 235, 235);
+  }
+  71% {
+    color: rgb(150, 94, 191);
+  }
+  85% {
+    color: rgb(229, 169, 229);
+  }
+  100% {
+    color: rgb(233, 156, 12);
+  }
+}
+
+@keyframes failure {
+  0% {
+    color: rgb(94, 66, 66);
+  }
+  14% {
+    color: rgb(122, 111, 88);
+  }
+  28% {
+    color: rgb(135, 135, 98);
+  }
+  42% {
+    color: rgb(98, 130, 98);
+  }
+  57% {
+    color: rgb(72, 72, 93);
+  }
+  71% {
+    color: rgb(113, 100, 122);
+  }
+  85% {
+    color: rgb(117, 94, 117);
+  }
+  100% {
+    color: rgb(116, 95, 95);
+  }
+}
