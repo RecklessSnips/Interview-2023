@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hard</title>
+    <link rel="icon" href="/outstem_logo_icon.svg" type="image/svg+xml" />
+
+    <!-- css -->
+    <link rel="stylesheet" href="/css/default.css" />
+    <link rel="stylesheet" href="/css/animation.css" />
+
+    <!-- Latest compiled and minified CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Vue.js -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+    <!-- Font Awesome4 -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+  </head>
+  <body
+    class="body d-flex flex-column justify-content-start align-items-center fantasy"
+  >
+    <div id="app" class="container">
+      <div class="d-flex align-items-center justify-content-end mt-5 mb-1 me-5">
+        <div class="text-center shadow p-3 mb-3 bg-transparent rounded">
+          <h4 class="player-info">
+            Lives: <span class="text-success">{{lives}}</span>
+          </h4>
+          <h4 class="player-info">
+            Score: <span class="text-warning">{{score}}</span>
+          </h4>
+          <h4 class="player-info">
+            Level: <span class="level">{{level}}</span>
+          </h4>
+        </div>
+      </div>
+      <div class="d-flex justify-content-center">
+        <!-- Goal 2 - 3 -->
+        <div
+          class="fantasy"
+          v-show="isTF"
+          v-for="(question, index) in results"
+          :key="index"
+        >
+          <div>
+            <div
+              class="d-flex align-items-center justify-content-end mt-1 mb-4"
+            >
+              <div class="text-center">
+                <h2 class="mb-3">
+                  <span class="purple"><h1>Question:</h1></span> {{
+                  question.question }}
+                </h2>
+              </div>
+            </div>
+
+            <div class="d-flex align-items-center justify-content-center">
+              <div class="row justify-content-center">
+                <div class="d-flex flex-column align-items-center mb-2">
+                  <input
+                    type="radio"
+                    class="btn-check"
+                    name="selectOption"
+                    id="trueOption"
+                    autocomplete="off"
+                    value="True"
+                    v-model="option"
+                  />
+                  <label class="btn btn-outline-success btn-lg" for="trueOption"
+                    >True</label
+                  >
+                </div>
+                <div class="d-flex flex-column align-items-center mt-2">
+                  <input
+                    type="radio"
+                    class="btn-check"
+                    name="selectOption"
+                    id="falseOption"
+                    autocomplete="off"
+                    value="False"
+                    v-model="option"
+                  />
+                  <label class="btn btn-outline-danger btn-lg" for="falseOption"
+                    >False</label
+                  >
+                </div>
+                <!-- Button trigger modal -->
+                <button
+                  type="button"
+                  id="tf-btn"
+                  class="btn btn-outline-primary btn-lg mt-3"
+                  @click="checkAnswer()"
+                  data-bs-toggle="modal"
+                  data-bs-target="#staticBackdrop"
+                >
+                  Check Answer
+                </button>
+              </div>
+            </div>
+            <!-- Modal -->
+            <div
+              class="modal fade"
+              id="staticBackdrop"
+              data-bs-backdrop="static"
+              data-bs-keyboard="false"
+              tabindex="-1"
+              aria-labelledby="staticBackdropLabel"
+              aria-hidden="true"
+            >
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">
+                      <p v-if="isCorrect && !ifLoose">
+                        <span class="text-success">Correct!</span>
+                      </p>
+                      <p v-else-if="isNull ">
+                        <span class="text-secondary">Invalid!!!</span>
+                      </p>
+                      <p v-else-if="ifLoose">
+                        <span class="text-danger-emphasis"
+                          >Reject, no more lives</span
+                        >
+                      </p>
+                      <p v-else-if="!isCorrect && !ifLoose">
+                        <span class="text-danger">Incorrect!</span>
+                      </p>
+                    </h1>
+                  </div>
+                  <div class="modal-body">
+                    <p v-if="ifLoose && !isCorrect">
+                      Too bad :( You don't have any lives. Please restart the
+                      game The answer should be {{question.correct_answer}}
+                    </p>
+                    <p v-if="ifLoose && isCorrect">
+                      Even you are correct, you don't have any lives. Please
+                      restart the game
+                    </p>
+                    <p v-else-if="isCorrect && !ifLoose">
+                      Congrats! Keep up the pace!
+                    </p>
+                    <p v-else-if="isNull">
+                      Sorry! You have to choose an answer to continue!
+                    </p>
+                    <p v-else-if="!isCorrect && !ifLoose && !isLastLife">
+                      Wrong answer! Please try again!
+                    </p>
+                  </div>
+                  <div class="modal-footer d-flex justify-content-around">
+                    <button
+                      v-if="ifLoose"
+                      type="button"
+                      class="btn btn-outline-secondary"
+                      data-bs-dismiss="modal"
+                      @click="exit()"
+                    >
+                      Restart
+                    </button>
+                    <button
+                      v-if="!isCorrect && !ifLoose"
+                      type="button"
+                      class="btn btn-outline-secondary"
+                      data-bs-dismiss="modal"
+                    >
+                      Retry
+                    </button>
+                    <button
+                      v-if="isCorrect && !ifLoose"
+                      type="button"
+                      id="TFBtn"
+                      class="btn btn-outline-primary"
+                      data-bs-dismiss="modal"
+                      @click="switchToMulti()"
+                    >
+                      Next
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Goal 4 -->
+        <div
+          class="fantasy"
+          v-show="isMulti"
+          v-for="(question, index) in multipleQuestion"
+          :key="index"
+        >
+          <div>
+            <div
+              class="d-flex align-items-center justify-content-end mt-1 mb-2"
+            >
+              <div class="text-center">
+                <h2 class="mb-3">
+                  <span class="purple"><h1>Question:</h1></span> {{
+                  question.question }}
+                </h2>
+              </div>
+            </div>
+
+            <div class="d-flex align-items-center justify-content-center">
+              <div class="row justify-content-center">
+                <!-- 1 -->
+                <div class="d-flex flex-column align-items-center mb-2">
+                  <input
+                    type="radio"
+                    class="btn-check"
+                    name="multiOption"
+                    id="firstOption"
+                    autocomplete="off"
+                    v-bind:value="multiQs[0]"
+                    v-model="multiOp"
+                  />
+                  <label class="btn btn-outline-info btn-lg" for="firstOption"
+                    >{{multiQs[0]}}</label
+                  >
+                </div>
+                <!-- 2 -->
+                <div class="d-flex flex-column align-items-center mb-2">
+                  <input
+                    type="radio"
+                    class="btn-check"
+                    name="multiOption"
+                    id="secondOption"
+                    autocomplete="off"
+                    v-bind:value="multiQs[1]"
+                    v-model="multiOp"
+                  />
+                  <label class="btn btn-outline-info btn-lg" for="secondOption"
+                    >{{multiQs[1]}}</label
+                  >
+                </div>
+                <!-- 3 -->
+                <div class="d-flex flex-column align-items-center mb-2">
+                  <input
+                    type="radio"
+                    class="btn-check"
+                    name="multiOption"
+                    id="thirdOption"
+                    autocomplete="off"
+                    v-bind:value="multiQs[2]"
+                    v-model="multiOp"
+                  />
+                  <label class="btn btn-outline-info btn-lg" for="thirdOption"
+                    >{{multiQs[2]}}</label
+                  >
+                </div>
+                <!-- 4 -->
+                <div class="d-flex flex-column align-items-center mb-2">
+                  <input
+                    type="radio"
+                    class="btn-check"
+                    name="multiOption"
+                    id="fourthOption"
+                    autocomplete="off"
+                    v-bind:value="multiQs[3]"
+                    v-model="multiOp"
+                  />
+                  <label class="btn btn-outline-info btn-lg" for="fourthOption"
+                    >{{multiQs[3]}}</label
+                  >
+                </div>
+                <!-- Button trigger modal -->
+                <button
+                  type="button"
+                  id="modal-button"
+                  class="btn btn-outline-primary btn-lg mt-1 mb-3"
+                  @click="checkAnswer2()"
+                  data-bs-toggle="modal"
+                  data-bs-target="#staticBackdrop2"
+                >
+                  Check
+                </button>
+              </div>
+            </div>
+
+            <!-- Modal -->
+            <div
+              class="modal fade"
+              id="staticBackdrop2"
+              data-bs-backdrop="static"
+              data-bs-keyboard="false"
+              tabindex="-1"
+              aria-labelledby="staticBackdropLabel2"
+              aria-hidden="true"
+            >
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel2">
+                      <p v-if="isCorrect && !ifLoose">
+                        <span class="text-success">Correct!</span>
+                      </p>
+                      <p v-else-if="isNull ">
+                        <span class="text-secondary">Invalid!!!</span>
+                      </p>
+                      <p v-else-if="ifLoose">
+                        <span class="text-danger-emphasis"
+                          >Reject, no more lives</span
+                        >
+                      </p>
+                      <p v-else-if="!isCorrect && !ifLoose">
+                        <span class="text-danger">Incorrect!</span>
+                      </p>
+                    </h1>
+                  </div>
+                  <div class="modal-body">
+                    <p v-if="ifLoose && !isCorrect">
+                      Too bad :( You don't have any lives. Please restart the
+                      game The answer should be {{question.correct_answer}}
+                    </p>
+                    <p v-if="ifLoose && isCorrect">
+                      Even you are correct, you don't have any lives. Please
+                      restart the game
+                    </p>
+                    <p v-else-if="isCorrect && !ifLoose">
+                      Congrats! Keep up the pace!
+                    </p>
+                    <p v-else-if="isNull">
+                      Sorry! You have to choose an answer to continue!
+                    </p>
+                    <p v-else-if="!isCorrect && !ifLoose && !isLastLife">
+                      Wrong answer! Please try again!
+                    </p>
+                  </div>
+                  <div class="modal-footer d-flex justify-content-around">
+                    <button
+                      v-if="ifLoose"
+                      type="button"
+                      class="btn btn-outline-secondary"
+                      data-bs-dismiss="modal"
+                      @click="exit()"
+                    >
+                      Restart
+                    </button>
+                    <button
+                      v-if="!isCorrect && !ifLoose"
+                      type="button"
+                      class="btn btn-outline-secondary"
+                      data-bs-dismiss="modal"
+                    >
+                      Retry
+                    </button>
+                    <button
+                      v-if="isCorrect && !ifLoose"
+                      type="button"
+                      id="multiBtn"
+                      class="btn btn-outline-primary"
+                      data-bs-dismiss="modal"
+                    >
+                      <a
+                        href="/congrats"
+                        style="text-decoration: none"
+                        class="text-danger"
+                        >Finish!</a
+                      >
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="/hard.js"></script>
+  </body>
+</html>

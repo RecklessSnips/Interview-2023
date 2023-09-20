@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Congratulation</title>
+    <link rel="icon" href="/outstem_logo_icon.svg" type="image/svg+xml" />
+
+    <!-- css -->
+    <link rel="stylesheet" href="/css/default.css" />
+    <link rel="stylesheet" href="/css/animation.css" />
+
+    <!-- Latest compiled and minified CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Vue.js -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+    <!-- Font Awesome4 -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+  </head>
+  <body
+    class="body d-flex flex-column justify-content-start align-items-center fantasy"
+  >
+    <div id="app" class="container fantasy mt-5">
+      <div class="d-flex align-items-center justify-content-center mt-5 mb-3">
+        <div class="text-center p-3 mb-3 rounded">
+          <!-- A++ -->
+          <h1 class="rainbow-text" v-if="getGrade() === 'A++'">
+            <span class="emoji">&#129395;</span> Full score! Fantastic!!!
+            <span class="emoji">&#129321;</span>
+          </h1>
+          <!-- A+ -->
+          <h1 class="rainbow-text" v-if="getGrade() === 'A+'">
+            <span class="emoji">&#129321;</span> A+! Congrats!!!
+            <span class="emoji">&#128518;</span>
+          </h1>
+          <!-- A -->
+          <h1 class="rainbow-text" v-if="getGrade() === 'A'">
+            <span class="emoji">&#128518;</span> Straight A! Nicely done!!!
+            <span class="emoji">&#128541;</span>
+          </h1>
+          <!-- B+ -->
+          <h1 class="fine-text" v-if="getGrade() === 'B+'">
+            <span class="emoji">&#129303;</span> B+! Good job!!
+          </h1>
+          <!-- B -->
+          <h1 class="fine-text" v-if="getGrade() === 'B'">
+            <span class="emoji">&#129325;</span> Steady B! Well done!!
+          </h1>
+          <!-- C+ -->
+          <h1 class="ok-text" v-if="getGrade() === 'C+'">
+            <span class="emoji">&#129320;</span> C+! Wanna learn C++ or C#?
+          </h1>
+          <!-- C -->
+          <h1 class="ok-text" v-if="getGrade() === 'C'">
+            <span class="emoji">&#129765;</span> C! No wonder you are a
+            programmer.
+          </h1>
+          <!-- D+ -->
+          <h1 class="failure-text" v-if="getGrade() === 'D+'">
+            <span class="emoji">&#9760;&#65039;</span> D+ ?! See you very soon.
+          </h1>
+          <!-- D -->
+          <h1 class="failure-text" v-if="getGrade() === 'D'">
+            <span class="emoji">&#129313;</span> Bruhhhhh
+            <span class="emoji">&#129313;</span>
+          </h1>
+
+          <h4>Your Score: <span class="text-warning">{{score}}</span></h4>
+        </div>
+      </div>
+
+      <div v-for="(mistake, index) in mistakes" :key="index">
+        <div class="d-flex justify-content-center mt-2 mb-2">
+          <h4 v-if="!isFullScore" class="text-danger">Your carelessness:</h4>
+        </div>
+
+        <div class="d-flex justify-content-center">
+          <button
+            v-if="!isFullScore"
+            class="btn btn-outline-primary"
+            type="button"
+            data-bs-toggle="collapse"
+            :data-bs-target="'#collapse' + ids[index]"
+            aria-expanded="false"
+            aria-controls="collapseExample"
+          >
+            Mistake
+          </button>
+        </div>
+
+        <div class="collapse" :id="'collapse' + ids[index]">
+          <div class="card card-body bg-warning">
+            <h4>Question: {{mistake.question_name}}</h4>
+            <h4>Type: {{mistake.question_type}}</h4>
+            <h4>Difficulty: {{mistake.difficulty}}</h4>
+            <h4>Your answer: {{mistake.player_answer}}</h4>
+            <h4>Correct answer: {{mistake.correct_ans}}</h4>
+          </div>
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-center mt-4">
+        <div class="d-flex flex-column align-items-center">
+          <h4>Want to challenge yourself again?</h4>
+          <a
+            href="/start"
+            class="btn btn-outline-success mt-3 mb-3 me-auto ms-auto fantasy"
+            >Restart</a
+          >
+        </div>
+      </div>
+    </div>
+
+    <!-- js -->
+    <script src="/congrats.js"></script>
+  </body>
+</html>

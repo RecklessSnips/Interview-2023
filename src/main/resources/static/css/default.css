@@ -1,11 +1,34 @@
-body {
+.body {
   background-color: rgb(247, 227, 201);
+  background-image: linear-gradient(
+    140deg,
+    #eadedb 5%,
+    #b490a9 50%,
+    rgb(239, 176, 187) 75%
+  );
+  height: 100vh;
 }
 
 .fantasy {
-  font-family: fantasy;
+  font-family: Times, "Times New Roman", Georgia, serif;
 }
 
 a {
   text-decoration: none;
+}
+
+.hint {
+  font-family: cursive;
+}
+
+.level {
+  color: rgb(236, 105, 127);
+}
+
+.purple {
+  font-family: cursive;
+}
+
+.emoji {
+  font-size: 80px;
 }
