@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Congratulation</title>
+    <title>Trivia</title>
     <link rel="icon" href="/outstem_logo_icon.svg" type="image/svg+xml" />
 
     <!-- css -->
@@ -22,17 +22,11 @@
 
     <!-- Vue.js -->
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-
-    <!-- Font Awesome4 -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
-    />
   </head>
   <body
     class="body d-flex flex-column justify-content-start align-items-center fantasy"
   >
-    <div id="app" class="container fantasy mt-5">
+    <div id="app" class="container fantasy mt-5" style="overflow-y: auto">
       <div class="d-flex align-items-center justify-content-center mt-5 mb-3">
         <div class="text-center p-3 mb-3 rounded">
           <!-- A++ -->
@@ -81,11 +75,14 @@
         </div>
       </div>
 
+      <!-- Use v-for to responsively control all user's mistakes -->
       <div v-for="(mistake, index) in mistakes" :key="index">
         <div class="d-flex justify-content-center mt-2 mb-2">
           <h4 v-if="!isFullScore" class="text-danger">Your carelessness:</h4>
         </div>
 
+        <!-- Since each button's target and id needs to be unique -->
+        <!-- so must bind the bs-target to the collapse id -->
         <div class="d-flex justify-content-center">
           <button
             v-if="!isFullScore"
@@ -100,6 +97,7 @@
           </button>
         </div>
 
+        <!-- bind with the id array -->
         <div class="collapse" :id="'collapse' + ids[index]">
           <div class="card card-body bg-warning">
             <h4>Question: {{mistake.question_name}}</h4>
@@ -124,6 +122,6 @@
     </div>
 
     <!-- js -->
-    <script src="/congrats.js"></script>
+    <script src="/vue/congrats.js"></script>
   </body>
 </html>

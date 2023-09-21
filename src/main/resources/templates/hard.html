@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Hard</title>
+    <title>Trivia</title>
     <link rel="icon" href="/outstem_logo_icon.svg" type="image/svg+xml" />
 
     <!-- css -->
@@ -22,12 +22,6 @@
 
     <!-- Vue.js -->
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-
-    <!-- Font Awesome4 -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
-    />
   </head>
   <body
     class="body d-flex flex-column justify-content-start align-items-center fantasy"
@@ -328,7 +322,7 @@
                       restart the game
                     </p>
                     <p v-else-if="isCorrect && !ifLoose">
-                      Congrats! Keep up the pace!
+                      Congrats! You've now finish the game!
                     </p>
                     <p v-else-if="isNull">
                       Sorry! You have to choose an answer to continue!
@@ -377,6 +371,6 @@
         </div>
       </div>
     </div>
-    <script src="/hard.js"></script>
+    <script src="/vue/hard.js"></script>
   </body>
 </html>
