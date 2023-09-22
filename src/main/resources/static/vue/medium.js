@@ -9,6 +9,7 @@ const app = Vue.createApp({
       mistakes: null,
       id: null,
       incorrectAnswers: [],
+      incorrectMulti: [],
       level: null,
       ifLoose: false,
       score: sessionStorage.getItem("playerScore"),
@@ -195,7 +196,9 @@ const app = Vue.createApp({
         let parsedLives = parseInt(this.lives, 10);
         this.lives = parsedLives;
         let parsedScore = parseInt(this.score, 10);
-        if (!this.incorrectAnswers.includes(this.results[0]["question"])) {
+        if (
+          !this.incorrectMulti.includes(this.multipleQuestion[0]["question"])
+        ) {
           parsedScore += 4;
         }
         this.score = parsedScore;
@@ -217,7 +220,9 @@ const app = Vue.createApp({
           this.ifLoose = true;
           this.isLastLife = true;
         }
-        if (!this.incorrectAnswers.includes(this.results[0]["question"])) {
+        if (
+          !this.incorrectMulti.includes(this.multipleQuestion[0]["question"])
+        ) {
           let parsedID = parseInt(this.id, 10);
           parsedID++;
           const mistake = {
@@ -233,7 +238,7 @@ const app = Vue.createApp({
           sessionStorage.setItem("mistakes", JSON.stringify(this.mistakes));
           sessionStorage.setItem("ID", this.id);
         }
-        this.incorrectAnswers.push(this.results[0]["question"]);
+        this.incorrectMulti.push(this.multipleQuestion[0]["question"]);
       }
     },
     exit() {

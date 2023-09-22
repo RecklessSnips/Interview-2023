@@ -17,6 +17,7 @@ const app = Vue.createApp({
       // incorrect answer to keep track on which questions the user did wrong
       // if wrong, then when the user answer again, neither points will add, nor mistakes array will collect
       incorrectAnswers: [],
+      incorrectMulti: [],
       // game's level
       level: null,
       // player's points question worth: easy = 2, medium = 4, hard = 6
@@ -192,7 +193,9 @@ const app = Vue.createApp({
         let parsedLives = parseInt(this.lives, 10);
         this.lives = parsedLives;
         let parsedScore = parseInt(this.score, 10);
-        if (!this.incorrectAnswers.includes(this.results[0]["question"])) {
+        if (
+          !this.incorrectMulti.includes(this.multipleQuestion[0]["question"])
+        ) {
           parsedScore += 2;
         }
         this.score = parsedScore;
@@ -216,7 +219,9 @@ const app = Vue.createApp({
           this.ifLoose = true;
           this.isLastLife = true;
         }
-        if (!this.incorrectAnswers.includes(this.results[0]["question"])) {
+        if (
+          !this.incorrectMulti.includes(this.multipleQuestion[0]["question"])
+        ) {
           const mistake = {
             mistakeID: ++this.id,
             question_name: this.multipleQuestion[0]["question"],
@@ -229,7 +234,7 @@ const app = Vue.createApp({
           sessionStorage.setItem("mistakes", JSON.stringify(this.mistakes));
           sessionStorage.setItem("ID", this.id);
         }
-        this.incorrectAnswers.push(this.results[0]["question"]);
+        this.incorrectMulti.push(this.multipleQuestion[0]["question"]);
       }
     },
     // go to next page
