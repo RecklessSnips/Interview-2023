@@ -18,8 +18,6 @@ const app = Vue.createApp({
     getMistake() {
       const storedMistakes = sessionStorage.getItem("mistakes");
       this.mistakes = storedMistakes ? JSON.parse(storedMistakes) : [];
-      console.log("Mistakes");
-      console.log(this.mistakes);
     },
     getGrade() {
       let parsedScore = parseInt(this.score, 10);
