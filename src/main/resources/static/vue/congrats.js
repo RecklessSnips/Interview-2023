@@ -5,15 +5,22 @@ const app = Vue.createApp({
       lives: sessionStorage.getItem("lives"),
       isFullScore: false,
       // get all the user's mistakes
-      mistakes: JSON.parse(sessionStorage.getItem("mistakes")),
+      mistakes: null,
       // get mistakes ids
       ids: [],
     };
   },
   beforeMount() {
+    this.getMistake();
     this.getID();
   },
   methods: {
+    getMistake() {
+      const storedMistakes = sessionStorage.getItem("mistakes");
+      this.mistakes = storedMistakes ? JSON.parse(storedMistakes) : [];
+      console.log("Mistakes");
+      console.log(this.mistakes);
+    },
     getGrade() {
       let parsedScore = parseInt(this.score, 10);
       this.score = parsedScore;
@@ -40,8 +47,10 @@ const app = Vue.createApp({
     },
     // create all mistakes id, store them into the ids array
     getID() {
-      for (const element of this.mistakes) {
-        this.ids.push(element.mistakeID);
+      if (this.mistakes !== null) {
+        for (const element of this.mistakes) {
+          this.ids.push(element.mistakeID);
+        }
       }
     },
   },
