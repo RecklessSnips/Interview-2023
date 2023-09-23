@@ -1,6 +1,9 @@
+import { commonMethods } from "/vue/common.js";
+
 const app = Vue.createApp({
   data() {
     return {
+      ...commonMethods,
       questions: "https://opentdb.com/api.php?amount=1",
       // the origional data (response_code + results)
       response: null,
@@ -25,15 +28,11 @@ const app = Vue.createApp({
       score: 0,
       // if no more lives, is lose
       ifLoose: false,
-      // lives, get from current tab
-      lives: sessionStorage.getItem("lives"),
       // if last life
       isLastLife: false,
       // different question type
       isTF: true,
       isMulti: false,
-      // get type from previous web page
-      gameType: sessionStorage.getItem("questionType"),
       // player's choice for TF
       option: null,
       // player's choice for multi
@@ -42,6 +41,10 @@ const app = Vue.createApp({
       isNull: true,
       // if answer correct
       isCorrect: false,
+      // lives, get from current tab
+      lives: sessionStorage.getItem("lives"),
+      // get type from previous web page
+      gameType: sessionStorage.getItem("questionType"),
     };
   },
   beforeMount() {
@@ -69,79 +72,6 @@ const app = Vue.createApp({
           this.results = data.results;
           this.level = this.results[0].difficulty;
         });
-    },
-    // Goal 2 & 3
-    checkAnswer() {
-      // if player didn't select an answer
-      if (this.option === null) {
-        this.isCorrect = false;
-        this.isNull = true;
-        // answer correct
-      } else if (this.option === this.results[0]["correct_answer"]) {
-        // convert to integer
-        let parsedLives = parseInt(this.lives, 10);
-        this.lives = parsedLives;
-        let parsedScore = parseInt(this.score, 10);
-        // check if player already answered this question
-        if (!this.incorrectAnswers.includes(this.results[0]["question"])) {
-          parsedScore += 2;
-        }
-        // assign the converted data to the score
-        this.score = parsedScore;
-        sessionStorage.setItem("playerScore", this.score);
-        this.isCorrect = true;
-        this.isNull = false;
-      } else {
-        // answer incorrect
-        let parsedLives = parseInt(this.lives, 10);
-        parsedLives--;
-        this.lives = parsedLives;
-        let parsedScore = parseInt(this.score, 10);
-        parsedScore--;
-        this.score = parsedScore;
-        sessionStorage.setItem("playerScore", this.score);
-        sessionStorage.setItem("lives", this.lives);
-        this.isCorrect = false;
-        this.isNull = false;
-        // determine if it's the last life player has
-        if (this.lives === 0) {
-          this.ifLoose = true;
-          this.isLastLife = true;
-        }
-        // collect player's mistake, no redundance
-        if (!this.incorrectAnswers.includes(this.results[0]["question"])) {
-          // create the mistake object
-          const mistake = {
-            mistakeID: ++this.id,
-            question_name: this.results[0]["question"],
-            question_type: this.results[0]["type"],
-            difficulty: this.results[0]["difficulty"],
-            player_answer: this.option,
-            correct_ans: this.results[0]["correct_answer"],
-          };
-          // store into the mistake array
-          this.mistakes.push(mistake);
-          // transfer the object to JSON string
-          sessionStorage.setItem("mistakes", JSON.stringify(this.mistakes));
-          sessionStorage.setItem("ID", this.id);
-        }
-        this.incorrectAnswers.push(this.results[0]["question"]);
-      }
-    },
-    // hide the T/F question page
-    switchToMulti() {
-      this.isMulti = true;
-      this.isTF = false;
-    },
-    // prepare to randomly the answer's index
-    getRandomIndex() {
-      const set = new Set();
-      while (set.size < 4) {
-        let randomNum = Math.floor(Math.random() * 4);
-        set.add(randomNum);
-      }
-      // convert the set to an unique array
-      return Array.from(set);
     },
     getMulti() {
       return fetch(
@@ -184,37 +114,105 @@ const app = Vue.createApp({
           );
         });
     },
+    // hide the T/F question page
+    switchToMulti() {
+      this.isMulti = true;
+      this.isTF = false;
+    },
+    // exit
+    exit() {
+      commonMethods.sessionStore("lives", 3);
+      window.location.replace("/start");
+    },
+    // Goal 2 & 3
+    checkAnswer() {
+      // if player didn't select an answer
+      if (this.option === null) {
+        this.isCorrect = false;
+        this.isNull = true;
+        // answer correct
+      } else if (this.option === this.results[0]["correct_answer"]) {
+        // convert to integer
+        let parsedLives = commonMethods.parsedLives(this.lives);
+        this.lives = parsedLives;
+        let parsedScore = commonMethods.parsedScore(this.score);
+        // check if player already answered this question
+        if (!this.incorrectAnswers.includes(this.results[0]["question"])) {
+          parsedScore += 2;
+        }
+        // assign the converted data to the score
+        this.score = parsedScore;
+        this.isCorrect = true;
+        this.isNull = false;
+        commonMethods.sessionStore("playerScore", this.score);
+      } else {
+        // answer incorrect
+        let parsedLives = commonMethods.parsedLives(this.lives);
+        parsedLives--;
+        this.lives = parsedLives;
+        let parsedScore = commonMethods.parsedScore(this.score);
+        parsedScore--;
+        this.score = parsedScore;
+        this.isCorrect = false;
+        this.isNull = false;
+        commonMethods.sessionStore("playerScore", this.score);
+        commonMethods.sessionStore("lives", this.lives);
+        // determine if it's the last life player has
+        if (this.lives === 0) {
+          this.ifLoose = true;
+          this.isLastLife = true;
+        }
+        // collect player's mistake, no redundance
+        if (!this.incorrectAnswers.includes(this.results[0]["question"])) {
+          // create the mistake object
+          const mistake = {
+            mistakeID: ++this.id,
+            question_name: this.results[0]["question"],
+            question_type: this.results[0]["type"],
+            difficulty: this.results[0]["difficulty"],
+            player_answer: this.option,
+            correct_ans: this.results[0]["correct_answer"],
+          };
+          // store into the mistake array
+          this.mistakes.push(mistake);
+          // transfer the object to JSON string
+          commonMethods.sessionStore("mistakes", JSON.stringify(this.mistakes));
+          commonMethods.sessionStore("ID", this.id);
+        }
+        this.incorrectAnswers.push(this.results[0]["question"]);
+      }
+    },
     // Goal 4 & 5
     checkAnswer2() {
       if (this.multiOp === null || this.multiOp === undefined) {
         this.isCorrect = false;
         this.isNull = true;
       } else if (this.multiOp === this.multipleQuestion[0]["correct_answer"]) {
-        let parsedLives = parseInt(this.lives, 10);
+        let parsedLives = commonMethods.parsedLives(this.lives);
         this.lives = parsedLives;
-        let parsedScore = parseInt(this.score, 10);
+        let parsedScore = commonMethods.parsedScore(this.score);
         if (
           !this.incorrectMulti.includes(this.multipleQuestion[0]["question"])
         ) {
           parsedScore += 2;
         }
         this.score = parsedScore;
-        sessionStorage.setItem("playerScore", this.score);
         this.isCorrect = true;
         this.isNull = false;
+        commonMethods.sessionStore("playerScore", this.score);
       } else {
         // convert lives to integer
-        let parsedLives = parseInt(this.lives, 10);
+        let parsedLives = commonMethods.parsedLives(this.lives);
         parsedLives--;
         this.lives = parsedLives;
         // convert score to integer
-        let parsedScore = parseInt(this.score, 10);
+        let parsedScore = commonMethods.parsedScore(this.score);
         parsedScore--;
         this.score = parsedScore;
-        sessionStorage.setItem("playerScore", this.score);
-        sessionStorage.setItem("lives", this.lives);
         this.isCorrect = false;
         this.isNull = false;
+        commonMethods.sessionStore("playerScore", this.score);
+        commonMethods.sessionStore("lives", this.lives);
         if (this.lives === 0) {
           this.ifLoose = true;
           this.isLastLife = true;
@@ -231,16 +229,11 @@ const app = Vue.createApp({
             correct_ans: this.multipleQuestion[0]["correct_answer"],
           };
           this.mistakes.push(mistake);
-          sessionStorage.setItem("mistakes", JSON.stringify(this.mistakes));
-          sessionStorage.setItem("ID", this.id);
+          commonMethods.sessionStore("mistakes", JSON.stringify(this.mistakes));
+          commonMethods.sessionStore("ID", this.id);
         }
         this.incorrectMulti.push(this.multipleQuestion[0]["question"]);
       }
-    },
-    // go to next page
-    exit() {
-      sessionStorage.setItem("lives", 3);
-      window.location.replace("/start");
     },
   },
 });

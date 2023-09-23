@@ -1,6 +1,9 @@
+import { commonMethods } from "/vue/common.js";
+
 const app = Vue.createApp({
   data() {
     return {
+      ...commonMethods,
       questions: "https://opentdb.com/api.php?amount=1",
       response: null,
       results: [],
@@ -12,16 +15,16 @@ const app = Vue.createApp({
       incorrectMulti: [],
       level: null,
       ifLoose: false,
-      score: sessionStorage.getItem("playerScore"),
-      lives: sessionStorage.getItem("lives"),
       isLastLife: false,
       isTF: true,
       isMulti: false,
-      gameType: sessionStorage.getItem("questionType"),
       option: null,
       multiOp: null,
       isNull: true,
       isCorrect: false,
+      score: sessionStorage.getItem("playerScore"),
+      lives: sessionStorage.getItem("lives"),
+      gameType: sessionStorage.getItem("questionType"),
     };
   },
   beforeMount() {
@@ -87,68 +90,6 @@ const app = Vue.createApp({
           }
         });
     },
-    // Goal 2 & 3
-    checkAnswer() {
-      if (this.option === null) {
-        this.isCorrect = false;
-        this.isNull = true;
-      } else if (this.option === this.results[0]["correct_answer"]) {
-        let parsedLives = parseInt(this.lives, 10);
-        this.lives = parsedLives;
-        let parsedScore = parseInt(this.score, 10);
-        if (!this.incorrectAnswers.includes(this.results[0]["question"])) {
-          parsedScore += 4;
-        }
-        this.score = parsedScore;
-        sessionStorage.setItem("playerScore", this.score);
-        this.isCorrect = true;
-        this.isNull = false;
-      } else {
-        let parsedLives = parseInt(this.lives, 10);
-        parsedLives--;
-        this.lives = parsedLives;
-        let parsedScore = parseInt(this.score, 10);
-        parsedScore -= 2;
-        this.score = parsedScore;
-        sessionStorage.setItem("playerScore", this.score);
-        sessionStorage.setItem("lives", this.lives);
-        this.isCorrect = false;
-        this.isNull = false;
-        if (this.lives === 0) {
-          this.ifLoose = true;
-          this.isLastLife = true;
-        }
-        if (!this.incorrectAnswers.includes(this.results[0]["question"])) {
-          let parsedID = parseInt(this.id, 10);
-          parsedID++;
-          const mistake = {
-            mistakeID: parsedID,
-            question_name: this.results[0]["question"],
-            question_type: this.results[0]["type"],
-            difficulty: this.results[0]["difficulty"],
-            player_answer: this.option,
-            correct_ans: this.results[0]["correct_answer"],
-          };
-          this.mistakes.push(mistake);
-          this.id = parsedID;
-          sessionStorage.setItem("mistakes", JSON.stringify(this.mistakes));
-          sessionStorage.setItem("ID", this.id);
-        }
-        this.incorrectAnswers.push(this.results[0]["question"]);
-      }
-    },
-    switchToMulti() {
-      this.isMulti = true;
-      this.isTF = false;
-    },
-    getRandomIndex() {
-      const set = new Set();
-      while (set.size < 4) {
-        let randomNum = Math.floor(Math.random() * 4);
-        set.add(randomNum);
-      }
-      return Array.from(set);
-    },
     getMulti() {
       return fetch(
         this.questions +
@@ -164,7 +105,7 @@ const app = Vue.createApp({
           console.log("Multiple choice response: ");
           console.log(this.response);
           this.multipleQuestion = data.results;
-          const uniqueIndex = this.getRandomIndex();
+          const uniqueIndex = commonMethods.getRandomIndex();
           this.multiQs.splice(
             uniqueIndex[0],
             0,
@@ -187,35 +128,93 @@ const app = Vue.createApp({
           );
         });
     },
+    switchToMulti() {
+      this.isMulti = true;
+      this.isTF = false;
+    },
+    exit() {
+      commonMethods.sessionStore("lives", 3);
+      window.location.replace("/start");
+    },
+    // Goal 2 & 3
+    checkAnswer() {
+      if (this.option === null) {
+        this.isCorrect = false;
+        this.isNull = true;
+      } else if (this.option === this.results[0]["correct_answer"]) {
+        let parsedLives = commonMethods.parsedLives(this.lives);
+        this.lives = parsedLives;
+        let parsedScore = commonMethods.parsedScore(this.score);
+        if (!this.incorrectAnswers.includes(this.results[0]["question"])) {
+          parsedScore += 4;
+        }
+        this.score = parsedScore;
+        this.isCorrect = true;
+        this.isNull = false;
+        commonMethods.sessionStore("playerScore", this.score);
+      } else {
+        let parsedLives = commonMethods.parsedLives(this.lives);
+        parsedLives--;
+        this.lives = parsedLives;
+        let parsedScore = commonMethods.parsedScore(this.score);
+        parsedScore -= 2;
+        this.score = parsedScore;
+        this.isCorrect = false;
+        this.isNull = false;
+        commonMethods.sessionStore("playerScore", this.score);
+        commonMethods.sessionStore("lives", this.lives);
+        if (this.lives === 0) {
+          this.ifLoose = true;
+          this.isLastLife = true;
+        }
+        if (!this.incorrectAnswers.includes(this.results[0]["question"])) {
+          let parsedID = parseInt(this.id, 10);
+          parsedID++;
+          const mistake = {
+            mistakeID: parsedID,
+            question_name: this.results[0]["question"],
+            question_type: this.results[0]["type"],
+            difficulty: this.results[0]["difficulty"],
+            player_answer: this.option,
+            correct_ans: this.results[0]["correct_answer"],
+          };
+          this.mistakes.push(mistake);
+          this.id = parsedID;
+          commonMethods.sessionStore("mistakes", JSON.stringify(this.mistakes));
+          commonMethods.sessionStore("ID", this.id);
+        }
+        this.incorrectAnswers.push(this.results[0]["question"]);
+      }
+    },
     // Goal 4 & 5
     checkAnswer2() {
       if (this.multiOp === null || this.multiOp === undefined) {
         this.isCorrect = false;
         this.isNull = true;
       } else if (this.multiOp === this.multipleQuestion[0]["correct_answer"]) {
-        let parsedLives = parseInt(this.lives, 10);
+        let parsedLives = commonMethods.parsedLives(this.lives);
         this.lives = parsedLives;
-        let parsedScore = parseInt(this.score, 10);
+        let parsedScore = commonMethods.parsedScore(this.score);
         if (
           !this.incorrectMulti.includes(this.multipleQuestion[0]["question"])
         ) {
           parsedScore += 4;
         }
         this.score = parsedScore;
-        sessionStorage.setItem("playerScore", this.score);
         this.isCorrect = true;
         this.isNull = false;
+        commonMethods.sessionStore("playerScore", this.score);
       } else {
-        let parsedLives = parseInt(this.lives, 10);
+        let parsedLives = commonMethods.parsedLives(this.lives);
         parsedLives--;
         this.lives = parsedLives;
-        let parsedScore = parseInt(this.score, 10);
+        let parsedScore = commonMethods.parsedScore(this.score);
         parsedScore -= 2;
         this.score = parsedScore;
-        sessionStorage.setItem("playerScore", this.score);
-        sessionStorage.setItem("lives", this.lives);
         this.isCorrect = false;
         this.isNull = false;
+        commonMethods.sessionStore("playerScore", this.score);
+        commonMethods.sessionStore("lives", this.lives);
         if (this.lives === 0) {
           this.ifLoose = true;
           this.isLastLife = true;
@@ -235,15 +234,11 @@ const app = Vue.createApp({
           };
           this.mistakes.push(mistake);
           this.id = parsedID;
-          sessionStorage.setItem("mistakes", JSON.stringify(this.mistakes));
-          sessionStorage.setItem("ID", this.id);
+          commonMethods.sessionStore("mistakes", JSON.stringify(this.mistakes));
+          commonMethods.sessionStore("ID", this.id);
         }
         this.incorrectMulti.push(this.multipleQuestion[0]["question"]);
       }
-    },
-    exit() {
-      sessionStorage.setItem("lives", 3);
-      window.location.replace("/start");
     },
   },
 });
