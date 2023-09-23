@@ -136,7 +136,13 @@
                   <div class="modal-body">
                     <p v-if="ifLoose && !isCorrect">
                       Too bad :( You don't have any lives. Please restart the
-                      game The answer should be {{question.correct_answer}}
+                      game. <br />
+                      <span class="text-danger"
+                        >The answer should be
+                        <span class="fs-3">
+                          {{question.correct_answer}}</span
+                        ></span
+                      >
                     </p>
                     <p v-if="ifLoose && isCorrect">
                       Even you are correct, you don't have any lives. Please
@@ -315,7 +321,13 @@
                   <div class="modal-body">
                     <p v-if="ifLoose && !isCorrect">
                       Too bad :( You don't have any lives. Please restart the
-                      game The answer should be {{question.correct_answer}}
+                      game. <br />
+                      <span class="text-danger"
+                        >The answer should be
+                        <span class="fs-3">
+                          {{question.correct_answer}}
+                        </span></span
+                      >
                     </p>
                     <p v-if="ifLoose && isCorrect">
                       Even you are correct, you don't have any lives. Please
