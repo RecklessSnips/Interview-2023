@@ -7,6 +7,20 @@
     rgb(239, 176, 187) 75%
   );
   height: 100vh;
+  background-size: 200% 100%; /* Make the gradient wider */
+  animation: flow 5s linear infinite; /* Create the animation */
+}
+
+@keyframes flow {
+  0% {
+    background-position: 100% 0;
+  }
+  50% {
+    background-position: 0% 0;
+  }
+  100% {
+    background-position: 100% 0;
+  }
 }
 
 .fantasy {
